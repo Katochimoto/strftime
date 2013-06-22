@@ -19,7 +19,7 @@
  * %[^#!~]A      полное название дня недели, в соответствии с настройками локали
  * %[^#!~]b      аббревиатура названия месяца, в соответствии с настройками локали
  * %[^#!~]B      полное название месяца, в соответствии с настройками локали
- * %[^!#]f       аббревиатура названия месяца с точкой, в соответствии с настройками локали
+ * %[^#!~]f       аббревиатура названия месяца с точкой, в соответствии с настройками локали
  * %[^#]v        [позавтчера|вчера|сегодня|завтра|послезавтра|%d %#b)
  * %c            предпочитаемое отображение даты и времени, в зависимости от текущей локали
  * %[0-_]C       двухзначный порядковый номер столетия (год, деленный на 100, усеченный до целого)
@@ -91,43 +91,43 @@
 
     var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFhrRTxX])/g;
     var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFhrRTxX])/;
-    var regSpec = /%(([#!~\^]?)[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnptuUwYzZs%])/g;
+    var regSpec = /%(([#\^!~]{0,2})[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnptuUwYzZs%])/g;
 
     var specifiers = {
-        'a': function(d, letterCase) {
-            return toLetterCase(strftime.locale.a[specifiers.u(d) - 1], letterCase);
+        'a': function(d, mode) {
+            return toLetterCase(strftime.locale.a[specifiers.u(d) - 1], mode);
         },
-        'A': function(d, letterCase) {
-            return toLetterCase(strftime.locale.A[specifiers.u(d) - 1], letterCase);
+        'A': function(d, mode) {
+            return toLetterCase(strftime.locale.A[specifiers.u(d) - 1], mode);
         },
-        'b': function(d, letterCase, numPad, genitive) {
-            return toLetterCase(strftime.locale[genitive ? 'bg' : 'b'][d.getMonth()], letterCase);
+        'b': function(d, mode, numPad, genitive) {
+            return toLetterCase(strftime.locale[genitive ? 'bg' : 'b'][d.getMonth()], mode);
         },
-        'f': function(d, letterCase, numPad, genitive) {
-            return toLetterCase(strftime.locale[genitive ? 'fg' : 'f'][d.getMonth()], letterCase);
+        'f': function(d, mode, numPad, genitive) {
+            return toLetterCase(strftime.locale[genitive ? 'fg' : 'f'][d.getMonth()], mode);
         },
-        'B': function(d, letterCase, numPad, genitive) {
-            return toLetterCase(strftime.locale[genitive ? 'Bg' : 'B'][d.getMonth()], letterCase);
+        'B': function(d, mode, numPad, genitive) {
+            return toLetterCase(strftime.locale[genitive ? 'Bg' : 'B'][d.getMonth()], mode);
         },
         'c': function() {
             return strftime.locale.c;
         },
-        'C': function(d, letterCase, numPad) {
+        'C': function(d, mode, numPad) {
             return pad(d.getFullYear() / 100|0, numPad, 0);
         },
-        'd': function(d, letterCase, numPad) {
+        'd': function(d, mode, numPad) {
             return pad(d.getDate(), numPad, 0);
         },
         'D': function() {
             return '%m/%d/%y';
         },
-        'e': function(d, letterCase, numPad) {
+        'e': function(d, mode, numPad) {
             return pad(d.getDate(), numPad, ' ');
         },
         'F': function() {
             return '%Y-%m-%d';
         },
-        'g': function(d, letterCase, numPad) {
+        'g': function(d, mode, numPad) {
             return pad(specifiers.G(d) % 100, numPad, 0);
         },
         'G': function(d) {
@@ -147,29 +147,29 @@
         'h': function() {
             return '%b';
         },
-        'H': function(d, letterCase, numPad) {
+        'H': function(d, mode, numPad) {
             return pad(d.getHours(), numPad, 0);
         },
-        'I': function(d, letterCase, numPad) {
+        'I': function(d, mode, numPad) {
             var hour = d.getHours() % 12;
             return pad(hour === 0 ? 12 : hour, numPad, 0);
         },
         /**
          * @param {Date} d
-         * @param {String} [letterCase]
+         * @param {String} [mode]
          * @param {String|Number} [numPad]
          * @returns {String|Number}
          */
-        'j': function(d, letterCase, numPad) {
+        'j': function(d, mode, numPad) {
             var ms = d - new Date('' + d.getFullYear() + '/1/1 GMT');
             ms += d.getTimezoneOffset() * 60000;
             var day = 1 + ms / 60000 / 60 / 24|0;
             return pad(day, numPad, 0, 100);
         },
-        'm': function(d, letterCase, numPad) {
+        'm': function(d, mode, numPad) {
             return pad(d.getMonth() + 1, numPad, 0);
         },
-        'M': function(d, letterCase, numPad) {
+        'M': function(d, mode, numPad) {
             return pad(d.getMinutes(), numPad, 0);
         },
         'n': function() {
@@ -187,7 +187,7 @@
         'R': function() {
             return '%H:%M';
         },
-        'S': function(d, letterCase, numPad) {
+        'S': function(d, mode, numPad) {
             return pad(d.getSeconds(), numPad, 0);
         },
         't': function() {
@@ -206,7 +206,7 @@
             var woy = (day + rdow) / 7|0;
             return pad(woy, 0);
         },
-        'V': function(d, letterCase, numPad) {
+        'V': function(d, mode, numPad) {
             var woy = specifiers.W(d)|0;
             var dow1_1 = (new Date('' + d.getFullYear() + '/1/1')).getDay();
             var idow = woy + (dow1_1 > 4 || dow1_1 <= 1 ? 0 : 1);
@@ -220,7 +220,7 @@
         'w': function(d) {
             return d.getDay();
         },
-        'W': function(d, letterCase, numPad) {
+        'W': function(d, mode, numPad) {
             var day = specifiers.j(d)|0;
             var rdow = 7 - specifiers.u(d)|0;
             var woy = (day + rdow) / 7|0;
@@ -232,7 +232,7 @@
         'X': function() {
             return strftime.locale.X;
         },
-        'y': function(d, letterCase, numPad) {
+        'y': function(d, mode, numPad) {
             return pad(d.getFullYear() % 100, numPad, 0);
         },
         'Y': function(d) {
@@ -247,7 +247,7 @@
         'Z': function(d) {
             return d.toString().replace(/^.*\(([^)]+)\)$/, '$1');
         },
-        'l': function(d, letterCase, numPad) {
+        'l': function(d, mode, numPad) {
             var l = d.getHours() % 12;
             return pad(l === 0 ? 12 : l, numPad, ' ');
         },
@@ -257,17 +257,17 @@
         '%': function() {
             return '%';
         },
-        'v': function(d, letterCase) {
+        'v': function(d, mode) {
             var now = new Date();
             var td = d.getTime() + d.getTimezoneOffset() * 60000;
             var time = now.getTime() + now.getTimezoneOffset() * 60000;
             var diff = Math.ceil((td - time) / 60000 / 60 / 24) + 2;
 
             if (strftime.locale.day[diff]) {
-                return toLetterCase(strftime.locale.day[diff]);
+                return toLetterCase(strftime.locale.day[diff], mode);
 
             } else {
-                return '%d %' + letterCase + 'b';
+                return '%d %' + mode + 'b';
             }
         },
 
@@ -346,7 +346,10 @@
      * @returns {String}
      */
     function formatTransform(_, spec, mod, numPad, pos, str) {
-        spec = spec.replace(/^[#_0\^\-!~]/, '');
+        spec = '' + spec;
+        mod = '' + mod;
+
+        spec = spec.replace(/^[#_0\^\-!~]+/, '');
         var s = specifiers[spec];
 
         if (!s) {
@@ -354,9 +357,9 @@
         }
 
         var genitive = false;
-        if (mod !== '!'
+        if (mod.indexOf('!') === -1
             && spec.length === 1
-            && (mod === '~' || ('bBf'.indexOf(spec) > -1 && /%[0\-_]?d[\s]+$/.test(str.substr(0, pos))))) {
+            && (mod.indexOf('~') > -1 || ('bBf'.indexOf(spec) > -1 && /%[0\-_]?d[\s]+$/.test(str.substr(0, pos))))) {
 
             genitive = true;
         }
@@ -366,9 +369,9 @@
 
     /**
      * @param {Number} x
-     * @param {String|Number} [pad]
-     * @param {String|Number} [def=0]
-     * @param {String|Number} [r=10]
+     * @param {String|Number|undefined} [pad]
+     * @param {String|Number|undefined} [def=0]
+     * @param {String|Number|undefined} [r=10]
      * @returns {String|Number}
      */
     function pad(x, pad, def, r) {
@@ -401,17 +404,21 @@
 
     /**
      * @param {String} str
-     * @param {String|undefined} [letterCase]
+     * @param {String} [mode]
      * @returns {String}
      */
-    function toLetterCase(str, letterCase) {
-        switch (letterCase) {
-            case '#':
-                return str.toLowerCase();
-            case '^':
-                return str.toUpperCase();
-            default:
-                return str.substr(0, 1).toUpperCase() + str.substr(1);
+    function toLetterCase(str, mode) {
+        str = '' + str;
+        mode = '' + mode;
+
+        if (mode.indexOf('#') > -1) {
+            return str.toLowerCase();
         }
+
+        if (mode.indexOf('^') > -1) {
+            return str.toUpperCase();
+        }
+
+        return str.substr(0, 1).toUpperCase() + str.substr(1);
     }
 }());

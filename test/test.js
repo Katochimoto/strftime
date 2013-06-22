@@ -40,6 +40,6 @@ var strftime = require('../strftime');
 
 strftime.locale = localeDate;
 
-var str = strftime('asd  %d %B asd', new Date(2013,5,10));
+var str = strftime('asd  %d %!#B asd', new Date(2013,5,10));
 
 console.log(str);
