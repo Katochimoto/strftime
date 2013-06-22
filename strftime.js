@@ -12,12 +12,14 @@
  *
  * %^b           верхний регистр
  * %#B           нижний регистр
+ * %!B           название всегда в ИП
+ * %~B           название всегда в РП
  *
- * %[^#]a        сокращенное название дня недели, в соответствии с настройками локали
- * %[^#]A        полное название дня недели, в соответствии с настройками локали
- * %[^#]b        аббревиатура названия месяца, в соответствии с настройками локали
- * %[^#]B        полное название месяца, в соответствии с настройками локали
- * %[^#]f        аббревиатура названия месяца с точкой, в соответствии с настройками локали
+ * %[^#!~]a      сокращенное название дня недели, в соответствии с настройками локали
+ * %[^#!~]A      полное название дня недели, в соответствии с настройками локали
+ * %[^#!~]b      аббревиатура названия месяца, в соответствии с настройками локали
+ * %[^#!~]B      полное название месяца, в соответствии с настройками локали
+ * %[^!#]f       аббревиатура названия месяца с точкой, в соответствии с настройками локали
  * %[^#]v        [позавтчера|вчера|сегодня|завтра|послезавтра|%d %#b)
  * %c            предпочитаемое отображение даты и времени, в зависимости от текущей локали
  * %[0-_]C       двухзначный порядковый номер столетия (год, деленный на 100, усеченный до целого)
@@ -89,7 +91,7 @@
 
     var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFhrRTxX])/g;
     var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFhrRTxX])/;
-    var regSpec = /%(([#\^]?)[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnptuUwYzZs%])/g;
+    var regSpec = /%(([#!~\^]?)[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnptuUwYzZs%])/g;
 
     var specifiers = {
         'a': function(d, letterCase) {
@@ -338,13 +340,13 @@
      * @param {String} _
      * @param {String} spec
      * @param {String} [numPad]
-     * @param {String} [letterCase]
+     * @param {String} [mod]
      * @param {Number} [pos]
      * @param {String} [str]
      * @returns {String}
      */
-    function formatTransform(_, spec, letterCase, numPad, pos, str) {
-        spec = spec.replace(/^[#_0\^\-]/, '');
+    function formatTransform(_, spec, mod, numPad, pos, str) {
+        spec = spec.replace(/^[#_0\^\-!~]/, '');
         var s = specifiers[spec];
 
         if (!s) {
@@ -352,11 +354,14 @@
         }
 
         var genitive = false;
-        if (spec.length === 1 && 'bBf'.indexOf(spec) > -1 && /%[0\-_]?d[\s]+$/.test(str.substr(0, pos))) {
+        if (mod !== '!'
+            && spec.length === 1
+            && (mod === '~' || ('bBf'.indexOf(spec) > -1 && /%[0\-_]?d[\s]+$/.test(str.substr(0, pos))))) {
+
             genitive = true;
         }
 
-        return s(formatTransform.date, letterCase, numPad, genitive);
+        return s(formatTransform.date, mod, numPad, genitive);
     }
 
     /**
