@@ -8,6 +8,6 @@ var util = require('util');
 var strftime = require('../strftime');
 
 
-var str = strftime('asd %Fg asd', new Date());
+var str = strftime('asd %Date_df asd', new Date());
 
 console.log(str);
