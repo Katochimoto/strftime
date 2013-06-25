@@ -118,7 +118,7 @@
     };
 
     var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFhrRTxX])/g;
-    var regAgregatSearch = /%(F[abcdefg]|[#\^]?[v]|[cDFhrRTxX])/;
+    var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFhrRTxX])/;
     var regSpec = /%(([#\^]?)[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnptuUwYzZs%])/g;
 
     var specifiers = {
