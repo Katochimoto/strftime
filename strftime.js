@@ -73,6 +73,7 @@
  */
 ;(function() {
     'use strict';
+    'use asm';
 
     var namespace;
 
@@ -140,7 +141,7 @@
             return localeDate.c;
         },
         'C': function(d, letterCase, numPad) {
-            return pad(parseInt(d.getFullYear() / 100, 10), numPad, 0);
+            return pad(d.getFullYear() / 100|0, numPad, 0);
         },
         'd': function(d, letterCase, numPad) {
             return pad(d.getDate(), numPad, 0);
@@ -158,9 +159,9 @@
             return pad(specifiers.G(d) % 100, numPad, 0);
         },
         'G': function(d) {
-            var y = d.getFullYear();
-            var V = parseInt(specifiers.V(d), 10);
-            var W = parseInt(specifiers.W(d), 10);
+            var y = d.getFullYear()|0;
+            var V = specifiers.V(d)|0;
+            var W = specifiers.W(d)|0;
 
             if (W > V) {
                 y++;
@@ -190,7 +191,7 @@
         'j': function(d, letterCase, numPad) {
             var ms = d - new Date('' + d.getFullYear() + '/1/1 GMT');
             ms += d.getTimezoneOffset() * 60000;
-            var day = parseInt(ms / 60000 / 60 / 24, 10) + 1;
+            var day = 1 + ms / 60000 / 60 / 24|0;
             return pad(day, numPad, 0, 100);
         },
         'm': function(d, letterCase, numPad) {
@@ -228,13 +229,13 @@
             return day === 0 ? 7 : day;
         },
         'U': function(d) {
-            var day = parseInt(specifiers.j(d), 10);
+            var day = specifiers.j(d)|0;
             var rdow = 6 - d.getDay();
-            var woy = parseInt((day + rdow) / 7, 10);
+            var woy = (day + rdow) / 7|0;
             return pad(woy, 0);
         },
         'V': function(d, letterCase, numPad) {
-            var woy = parseInt(specifiers.W(d), 10);
+            var woy = specifiers.W(d)|0;
             var dow1_1 = (new Date('' + d.getFullYear() + '/1/1')).getDay();
             var idow = woy + (dow1_1 > 4 || dow1_1 <= 1 ? 0 : 1);
             if (idow === 53 && (new Date('' + d.getFullYear() + '/12/31')).getDay() < 4) {
@@ -248,9 +249,9 @@
             return d.getDay();
         },
         'W': function(d, letterCase, numPad) {
-            var day = parseInt(specifiers.j(d), 10);
-            var rdow = 7 - specifiers.u(d);
-            var woy = parseInt((day + rdow) / 7, 10);
+            var day = specifiers.j(d)|0;
+            var rdow = 7 - specifiers.u(d)|0;
+            var woy = (day + rdow) / 7|0;
             return pad(woy, numPad, 0, 10);
         },
         'x': function() {
@@ -267,7 +268,7 @@
         },
         'z': function(d) {
             var o = d.getTimezoneOffset();
-            var H = pad(parseInt(Math.abs(o / 60), 10), 0);
+            var H = pad(Math.abs(o / 60)|0, 0);
             var M = pad(o % 60, 0);
             return (o > 0 ? '-' : '+') + H + M;
         },
@@ -279,7 +280,7 @@
             return pad(l === 0 ? 12 : l, numPad, ' ');
         },
         's': function(d) {
-            return parseInt(d.getTime() / 1000, 10);
+            return (d.getTime() / 1000)|0;
         },
         '%': function() {
             return '%';
@@ -343,7 +344,7 @@
 
         switch (typeof(date)) {
             case 'string':
-                date = parseInt(date, 10);
+                date = +date;
             case 'number':
                 date = new Date(date);
             case 'object':
@@ -416,7 +417,7 @@
             pad = def;
         }
 
-        for (; parseInt(x, 10) < r && r > 1; r /= 10) {
+        for (; r > x|0 && r > 1; r /= 10) {
             x = pad.toString() + x;
         }
 
