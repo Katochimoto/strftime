@@ -1,0 +1,14 @@
+{
+    "name": "strftime",
+    "version": "0.0.0",
+    "description": "strftime",
+    "main": "strftime.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "strftime"
+    ],
+    "author": "rikishi",
+    "license": "BSD"
+}
