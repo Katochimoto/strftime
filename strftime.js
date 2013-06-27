@@ -87,58 +87,28 @@
 
     namespace.strftime = strftime;
 
-    var localeDate = {
-        'a': 'Пн Вт Ср Чт Пт Сб Вс'.split(' '),
-        'A': 'Понедельник Вторник Среда Четверг Пятница Суббота Воскресенье'.split(' '),
-        'b': 'Янв Фев Мар Апр Май Июн Июл Авг Сен Окт Ноя Дек'.split(' '),
-        'B': 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь'.split(' '),
-        'f': 'Янв. Фев. Мар. Апр. Май Июн. Июл. Авг. Сен. Окт. Ноя. Дек.'.split(' '),
-        'c': '%Y-%m-%d %H:%M:%S',
-        'p': 'ДП ПП'.split(' '),
-        'P': 'дп пп'.split(' '),
-        'r': '%I:%M:%S %p',
-        'x': '%m/%d/%y',
-        'X': '%H:%M:%S',
-        // алиас падежа обязательно указать после обозначения
-        'Bg': 'Января Февраля Марта Апреля Мая Июня Июля Августа Сентября Октября Ноября Декабря'.split(' '),
-        'bg': 'Янв Фев Мар Апр Мая Июн Июл Авг Сен Окт Ноя Дек'.split(' '),
-        'fg': 'Янв. Фев. Мар. Апр. Мая Июн. Июл. Авг. Сен. Окт. Ноя. Дек.'.split(' '),
-        'day': 'Позавчера Вчера Сегодня Завтра Послезавтра'.split(' '),
-
-
-        'Date_dBY_year_in_HM': '%-d %#B %Y года в %-H:%M',
-        'Date_dBY_year': '%-d %#B %Y года',
-        'Date_dBY': '%-d %#B %Y',
-        'Date_AdBY': '%A, %-d %#B %Y',
-        'Date_dBA': '%-d %#B, %#A',
-        'Date_df_in_HM': '%-d %#f в %-H:%M',
-        'Date_dfY': '%-d %#f %Y',
-        'Date_dB_in_HM': '%-d %#B в %-H:%M',
-        'Date_df': '%-d %#f'
-    };
-
     var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFhrRTxX])/g;
     var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFhrRTxX])/;
     var regSpec = /%(([#\^]?)[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnptuUwYzZs%])/g;
 
     var specifiers = {
         'a': function(d, letterCase) {
-            return toLetterCase(localeDate.a[specifiers.u(d) - 1], letterCase);
+            return toLetterCase(strftime.locale.a[specifiers.u(d) - 1], letterCase);
         },
         'A': function(d, letterCase) {
-            return toLetterCase(localeDate.A[specifiers.u(d) - 1], letterCase);
+            return toLetterCase(strftime.locale.A[specifiers.u(d) - 1], letterCase);
         },
         'b': function(d, letterCase, numPad, genitive) {
-            return toLetterCase(localeDate[genitive ? 'bg' : 'b'][d.getMonth()], letterCase);
+            return toLetterCase(strftime.locale[genitive ? 'bg' : 'b'][d.getMonth()], letterCase);
         },
         'f': function(d, letterCase, numPad, genitive) {
-            return toLetterCase(localeDate[genitive ? 'fg' : 'f'][d.getMonth()], letterCase);
+            return toLetterCase(strftime.locale[genitive ? 'fg' : 'f'][d.getMonth()], letterCase);
         },
         'B': function(d, letterCase, numPad, genitive) {
-            return toLetterCase(localeDate[genitive ? 'Bg' : 'B'][d.getMonth()], letterCase);
+            return toLetterCase(strftime.locale[genitive ? 'Bg' : 'B'][d.getMonth()], letterCase);
         },
         'c': function() {
-            return localeDate.c;
+            return strftime.locale.c;
         },
         'C': function(d, letterCase, numPad) {
             return pad(d.getFullYear() / 100|0, numPad, 0);
@@ -204,13 +174,13 @@
             return "\n";
         },
         'p': function (d) {
-            return localeDate.p[d.getHours() >= 12 ? 1 : 0];
+            return strftime.locale.p[d.getHours() >= 12 ? 1 : 0];
         },
         'P': function (d) {
-            return localeDate.P[d.getHours() >= 12 ? 1 : 0];
+            return strftime.locale.P[d.getHours() >= 12 ? 1 : 0];
         },
         'r': function() {
-            return localeDate.r;
+            return strftime.locale.r;
         },
         'R': function() {
             return '%H:%M';
@@ -255,10 +225,10 @@
             return pad(woy, numPad, 0, 10);
         },
         'x': function() {
-            return localeDate.x;
+            return strftime.locale.x;
         },
         'X': function() {
-            return localeDate.X;
+            return strftime.locale.X;
         },
         'y': function(d, letterCase, numPad) {
             return pad(d.getFullYear() % 100, numPad, 0);
@@ -291,8 +261,8 @@
             var time = now.getTime() + now.getTimezoneOffset() * 60000;
             var diff = Math.ceil((td - time) / 60000 / 60 / 24) + 2;
 
-            if (localeDate.day[diff]) {
-                return toLetterCase(localeDate.day[diff]);
+            if (strftime.locale.day[diff]) {
+                return toLetterCase(strftime.locale.day[diff]);
 
             } else {
                 return '%d %' + letterCase + 'b';
@@ -303,34 +273,34 @@
             return '%Y-%m-%dT%H:%M:%S';
         },
         'Date_dBY_year_in_HM': function() {
-            return localeDate.Date_dBY_year_in_HM;
+            return strftime.locale.Date_dBY_year_in_HM;
         },
         'Date_dBY_year': function() {
-            return localeDate.Date_dBY_year;
+            return strftime.locale.Date_dBY_year;
         },
         'Date_dBY': function() {
-            return localeDate.Date_dBY;
+            return strftime.locale.Date_dBY;
         },
         'Date_dBA': function() {
-            return localeDate.Date_dBA;
+            return strftime.locale.Date_dBA;
         },
         'Date_AdBY': function() {
-            return localeDate.Date_AdBY;
+            return strftime.locale.Date_AdBY;
         },
         'Date_df_in_HM': function() {
-            return localeDate.Date_df_in_HM;
+            return strftime.locale.Date_df_in_HM;
         },
         'Date_dfY': function() {
-            return localeDate.Date_dfY;
+            return strftime.locale.Date_dfY;
         },
         'Date_dB_in_HM': function() {
-            return localeDate.Date_dB_in_HM;
+            return strftime.locale.Date_dB_in_HM;
         },
         'Date_dmY': function() {
             return '%d.%m.%Y';
         },
         'Date_df': function() {
-            return localeDate.Date_df;
+            return strftime.locale.Date_df;
         }
     };
 
