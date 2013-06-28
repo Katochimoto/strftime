@@ -73,7 +73,7 @@
  * %Date_dmY                04.05.2013 (Short_Date_3)
  * %Date_df                 21 окт. (Short_Date_2)
  */
-;(function() {
+(function() {
     'use strict';
     'use asm';
 
@@ -89,9 +89,10 @@
 
     namespace.strftime = strftime;
 
+    //var locale = include('strftime.locale.js');
     var locale = {
-        'a': 'Пн Вт Ср Чт Пт Сб Вс'.split(' '),
-        'A': 'Понедельник Вторник Среда Четверг Пятница Суббота Воскресенье'.split(' '),
+        'a': 'Вс Пн Вт Ср Чт Пт Сб'.split(' '),
+        'A': 'Воскресенье Понедельник Вторник Среда Четверг Пятница Суббота'.split(' '),
         'b': 'Янв Фев Мар Апр Май Июн Июл Авг Сен Окт Ноя Дек'.split(' '),
         'B': 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь'.split(' '),
         'f': 'Янв. Фев. Мар. Апр. Май Июн. Июл. Авг. Сен. Окт. Ноя. Дек.'.split(' '),
@@ -120,14 +121,14 @@
 
     var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFhrRTxX])/g;
     var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFhrRTxX])/;
-    var regSpec = /%(([#\^!~]{0,2})[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnptuUwYzZs%])/g;
+    var regSpec = /%(([#\^!~]{0,2})[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnpPtuUwYzZs%])/g;
 
     var specifiers = {
         'a': function(d, mode) {
-            return toLetterCase(locale.a[specifiers.u(d) - 1], mode);
+            return toLetterCase(locale.a[d.getDay()], mode);
         },
         'A': function(d, mode) {
-            return toLetterCase(locale.A[specifiers.u(d) - 1], mode);
+            return toLetterCase(locale.A[d.getDay()], mode);
         },
         'b': function(d, mode, numPad, genitive) {
             return toLetterCase(locale[genitive ? 'bg' : 'b'][d.getMonth()], mode);
@@ -205,10 +206,12 @@
             return "\n";
         },
         'p': function (d) {
-            return locale.p[d.getHours() >= 12 ? 1 : 0];
+            var p = d.getHours() >= 12 ? 1 : 0;
+            return ('' + locale.P[p]).toUpperCase();
         },
         'P': function (d) {
-            return locale.P[d.getHours() >= 12 ? 1 : 0];
+            var p = d.getHours() >= 12 ? 1 : 0;
+            return '' + locale.P[p];
         },
         'r': function() {
             return locale.r;
