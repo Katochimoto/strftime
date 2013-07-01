@@ -7,8 +7,16 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [
-        "strftime"
+        "strftime",
+        "javascript"
     ],
-    "author": "rikishi",
-    "license": "BSD"
+    "author": {
+        "name": "rikishi",
+        "email": "bufpost@yandex.ru"
+    },    
+    "license": "BSD",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:Katochimoto/strftime.git"
+    }
 }

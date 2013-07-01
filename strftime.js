@@ -70,54 +70,16 @@
  * %Date_df_in_HM           4 ноя. в 12:36 (Short_Date_5)
  * %Date_dfY                4 ноя. 2013 (Short_Date_4)
  * %Date_dB_in_HM           11 ноября в 12:36 (Short_Date_6)
- * %Date_dmY                04.05.2013 (Short_Date_3)
+ * %Date_dmY__dot           04.05.2013 (Short_Date_3)
  * %Date_df                 21 окт. (Short_Date_2)
+ * %Date_FT                 2013-07-01 12:43:01
+ * %Date_dmY__minus         01-07-2013
  */
 (function() {
     'use strict';
     'use asm';
 
-    var namespace;
-
-    if (typeof module !== 'undefined') {
-        namespace = module.exports = strftime;
-    } else {
-        namespace = (function(){
-            return this || (1, eval)('this');
-        }());
-    }
-
-    namespace.strftime = strftime;
-
-    //var locale = include('strftime.locale.js');
-    var locale = {
-        'a': 'Вс Пн Вт Ср Чт Пт Сб'.split(' '),
-        'A': 'Воскресенье Понедельник Вторник Среда Четверг Пятница Суббота'.split(' '),
-        'b': 'Янв Фев Мар Апр Май Июн Июл Авг Сен Окт Ноя Дек'.split(' '),
-        'B': 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь'.split(' '),
-        'f': 'Янв. Фев. Мар. Апр. Май Июн. Июл. Авг. Сен. Окт. Ноя. Дек.'.split(' '),
-        'c': '%Y-%m-%d %H:%M:%S',
-        'P': 'дп пп'.split(' '),
-        'r': '%I:%M:%S %p',
-        'x': '%m/%d/%y',
-        'X': '%H:%M:%S',
-        // алиас падежа обязательно указать после обозначения
-        'Bg': 'Января Февраля Марта Апреля Мая Июня Июля Августа Сентября Октября Ноября Декабря'.split(' '),
-        'bg': 'Янв Фев Мар Апр Мая Июн Июл Авг Сен Окт Ноя Дек'.split(' '),
-        'fg': 'Янв. Фев. Мар. Апр. Мая Июн. Июл. Авг. Сен. Окт. Ноя. Дек.'.split(' '),
-        'day': 'Позавчера Вчера Сегодня Завтра Послезавтра'.split(' '),
-
-
-        'Date_dBY_year_in_HM': '%-d %#B %Y года в %-H:%M',
-        'Date_dBY_year': '%-d %#B %Y года',
-        'Date_dBY': '%-d %#B %Y',
-        'Date_AdBY': '%A, %-d %#B %Y',
-        'Date_dBA': '%-d %#B, %#A',
-        'Date_df_in_HM': '%-d %#f в %-H:%M',
-        'Date_dfY': '%-d %#f %Y',
-        'Date_dB_in_HM': '%-d %#B в %-H:%M',
-        'Date_df': '%-d %#f'
-    };
+    var locale = include('strftime.json');
 
     var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFhrRTxX])/g;
     var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFhrRTxX])/;
@@ -293,13 +255,13 @@
             var now = new Date();
             var td = d.getTime() + d.getTimezoneOffset() * 60000;
             var time = now.getTime() + now.getTimezoneOffset() * 60000;
-            var diff = Math.ceil((td - time) / 60000 / 60 / 24) + 2;
+            var diff = Math.ceil((td - time) / 60000 / 60 / 24) + 1;
 
             if (locale.day[diff]) {
                 return toLetterCase(locale.day[diff], mode);
 
             } else {
-                return '%d %' + mode + 'b';
+                return '%d %' + mode + 'B';
             }
         },
 
@@ -330,17 +292,23 @@
         'Date_dB_in_HM': function() {
             return locale.Date_dB_in_HM;
         },
-        'Date_dmY': function() {
+        'Date_dmY__dot': function() {
             return '%d.%m.%Y';
         },
         'Date_df': function() {
             return locale.Date_df;
+        },
+        'Date_FT': function() {
+            return '%F %T';
+        },
+        'Date_dmY__minus': function() {
+            return '%d-%m-%Y';
         }
     };
 
     /**
      * @param {String} format
-     * @param {Date|String|Number} [date=Date]
+     * @param {Date|String|Number|Object|Array} [date=Date]
      * @returns {String|Null}
      */
     function strftime(format, date) {
@@ -352,6 +320,16 @@
             case 'number':
                 date = new Date(date);
             case 'object':
+                // для подстановки объекта из yate
+                if (date instanceof Array) {
+                    date = jpath(date, '.data')[0];
+                }
+
+                var type = Object.prototype.toString.call(date);
+                if (type === '[object Object]') {
+                    date = new Date(date.year|0, date.month|0, date.day|0, date.hours|0, date.minutes|0, date.seconds|0, date.ms|0);
+                }
+
                 if (!(date instanceof Date) || date === 'Invalid Date') {
                     return null;
                 }
@@ -453,4 +431,37 @@
 
         return str.substr(0, 1).toUpperCase() + str.substr(1);
     }
+
+    function include() {
+        return {
+            'a': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            'A': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            'b': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'B': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            'f': ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'],
+            'c': '%Y-%m-%d %H:%M:%S',
+            'P': ['am', 'pm'],
+            'r': '%I:%M:%S %p',
+            'x': '%m/%d/%y',
+            'X': '%H:%M:%S',
+            'day': ['Yesterday', 'Today', 'Tomorrow'],
+
+            // алиас падежа обязательно указать после обозначения
+            'bg': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'Bg': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            'fg': ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'],
+
+            'Date_dBY_year_in_HM': '%#B %-d, %Y at %-H:%M',
+            'Date_dBY_year': '%#B %-d, %Y',
+            'Date_dBY': '%#B %-d, %Y',
+            'Date_AdBY': '%A, %#B %-d, %Y',
+            'Date_dBA': '%#B %-d, %A',
+            'Date_df_in_HM': '%#f, %-d at %-H:%M',
+            'Date_dfY': '%-d %#f %Y',
+            'Date_dB_in_HM': '%#B %-d at %-H:%M',
+            'Date_df': '%-d %#f'
+        };
+    }
+
+    return strftime;
 }());
