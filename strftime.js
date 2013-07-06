@@ -15,9 +15,10 @@
  * %!B           название всегда в ИП
  * %~B           название всегда в РП
  *
- * %[^#!~]a      сокращенное название дня недели, в соответствии с настройками локали
- * %[^#!~]A      полное название дня недели, в соответствии с настройками локали
+ * %[^#]a        сокращенное название дня недели, в соответствии с настройками локали
+ * %[^#]A        полное название дня недели, в соответствии с настройками локали
  * %[^#!~]b      аббревиатура названия месяца, в соответствии с настройками локали
+ * %[^#!~]h      аббревиатура названия месяца, в соответствии с настройками локали (псевдоним %b)
  * %[^#!~]B      полное название месяца, в соответствии с настройками локали
  * %[^#!~]f      аббревиатура названия месяца с точкой, в соответствии с настройками локали
  * %[^#]v        [позавтчера|вчера|сегодня|завтра|послезавтра|%d %#b)
@@ -29,7 +30,6 @@
  * %F            дата в формате YYYY-MM-DD
  * %[0-_]g       двухзначный номер года в соответствии со стандартом ISO-8601:1988
  * %G            полная четырехзначная версия %g
- * %h            аббревиатура названия месяца, в соответствии с настройками локали (псевдоним %b)
  * %[0-_]H       двухзначный номер часа в 24-часовом формате
  * %[0-_]I       двухзначный номер часа в 12-часовом формате
  * %[0-_]j       номер дня в году с ведущими нулями
@@ -38,7 +38,7 @@
  * %n            перенос строки
  * %p            'AM' или 'PM' в верхнем регистре, в зависимости от указанного времени
  * %P            'am' или 'pm' в зависимости от указанного времени
- * %r            время в 12 часовом формате - 02:55:02 pm
+ * %r            время в 12 часовом формате - 02:55:02 PM
  * %R            время в 24 часовом формате HH:MM
  * %[0-_]S       двухзначный номер секунды (с ведущими нулями)
  * %t            табуляция
@@ -77,13 +77,12 @@
  */
 (function() {
     'use strict';
-    'use asm';
 
     var locale = include('strftime.json');
 
-    var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFhrRTxX])/g;
-    var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFhrRTxX])/;
-    var regSpec = /%(([#\^!~]{0,2})[aAbBf]|([0\-_]?)[CdegHIjmMSVWyl]|[GnpPtuUwYzZs%])/g;
+    var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFrRTxX])/g;
+    var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFrRTxX])/;
+    var regSpec = /%(([#\^!~]{0,2})[aAbBfh]|([0\-_]?)[CdegHIjmMSVWyl]|[GnpPtuUwYzZs%])/g;
 
     var specifiers = {
         'a': function(d, mode) {
@@ -94,6 +93,9 @@
         },
         'b': function(d, mode, numPad, genitive) {
             return toLetterCase(locale[genitive ? 'bg' : 'b'][d.getMonth()], mode);
+        },
+        'h': function(d, mode, numPad, genitive) {
+            return specifiers.b(d, mode, numPad, genitive);
         },
         'f': function(d, mode, numPad, genitive) {
             return toLetterCase(locale[genitive ? 'fg' : 'f'][d.getMonth()], mode);
@@ -135,9 +137,6 @@
             }
 
             return y;
-        },
-        'h': function() {
-            return '%b';
         },
         'H': function(d, mode, numPad) {
             return pad(d.getHours(), numPad, 0);
@@ -307,6 +306,15 @@
     };
 
     /**
+     * Форматированный вывод даты.
+     *
+     * Варианты указания даты:
+     * String - приведение к double timestamp и создание объекта Date
+     * Number - создание объекта Date
+     * Date - без преобразований
+     * Object - предполагает передачу объекта {year:, month:, day:, hours:, minutes:, seconds:, ms:}, свойства не обязательны
+     * Array - предполагает передачу псевдо-объекта из yate, с доступом к данным через jpath(date, '.data')[0]
+     *
      * @param {String} format
      * @param {Date|String|Number|Object|Array} [date=Date]
      * @returns {String|Null}
@@ -330,7 +338,7 @@
                     date = new Date(date.year|0, date.month|0, date.day|0, date.hours|0, date.minutes|0, date.seconds|0, date.ms|0);
                 }
 
-                if (!(date instanceof Date) || date === 'Invalid Date') {
+                if (!(date instanceof Date) || date == 'Invalid Date') {
                     return null;
                 }
         }
