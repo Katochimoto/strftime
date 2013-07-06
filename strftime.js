@@ -316,6 +316,23 @@ var strftime = function(format, date) {
     };
 
     /**
+     * @param {String} format
+     * @param {Date} date
+     * @returns {String}
+     */
+    strftime.format = function(format, date) {
+        formatTransform.date = date;
+
+        var loop = 5;
+        while (format.match(regAgregatSearch) && loop) {
+            format = format.replace(regAgregat, formatTransform);
+            loop--;
+        }
+
+        return format.replace(regSpec, formatTransform);
+    };
+
+    /**
      * @param {String} _
      * @param {String} spec
      * @param {String|undefined} [numPad]
@@ -401,22 +418,7 @@ var strftime = function(format, date) {
         return str.substr(0, 1).toUpperCase() + str.substr(1);
     }
 
-    /**
-     * @param {String} format
-     * @param {Date} date
-     * @returns {String}
-     */
-    strftime.format = function(format, date) {
-        formatTransform.date = date;
 
-        var loop = 5;
-        while (format.match(regAgregatSearch) && loop) {
-            format = format.replace(regAgregat, formatTransform);
-            loop--;
-        }
-
-        return format.replace(regSpec, formatTransform);
-    }
 }(strftime));
 
 })();
