@@ -3,7 +3,7 @@
 
     require('lib/strftime.js');
 
-    strftime.version = '0.0.1'
+    strftime.version = '0.0.1';
 
     var namespace;
 
