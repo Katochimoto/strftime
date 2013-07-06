@@ -90,6 +90,8 @@
         }());
     }
 
+    namespace.strftime = strftime;
+
 
     var locale = include('strftime.json');
 
