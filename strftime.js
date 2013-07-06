@@ -78,6 +78,19 @@
 (function() {
     'use strict';
 
+    strftime.version = '0.0.1'
+
+    var namespace;
+
+    if (typeof module !== 'undefined') {
+        namespace = module.exports = strftime;
+    } else {
+        namespace = (function() {
+            return this || (1, eval)('this');
+        }());
+    }
+
+
     var locale = include('strftime.json');
 
     var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFrRTxX])/g;
@@ -471,5 +484,4 @@
         };
     }
 
-    return strftime;
 }());

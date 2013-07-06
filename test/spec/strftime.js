@@ -1,3 +1,8 @@
+if (typeof require == 'function') {
+    strftime = require('../../strftime');
+    expect = require('expect.js');
+}
+
 describe('strftime', function() {
     it('по умолчанию текущая дата', function() {
         var d = new Date();
@@ -183,35 +188,35 @@ describe('strftime', function() {
     });
 
     it('%Date_dBY_year_in_HM - зависимый отт локали вывод времени в формате: 4 ноября 2013 года в 7:04', function() {
-        expect(strftime('%Date_dBY_year_in_HM', new Date(2013, 6, 3, 12, 12, 12))).to.be('3 июля 2013 года в 12:12');
+        expect(strftime('%Date_dBY_year_in_HM', new Date(2013, 6, 3, 12, 12, 12))).to.be('july 3, 2013 at 12:12');
     });
 
     it('%Date_dBY_year - зависимый отт локали вывод времени в формате: 4 ноября 2013 года ', function() {
-        expect(strftime('%Date_dBY_year', new Date(2013, 6, 3))).to.be('3 июля 2013 года');
+        expect(strftime('%Date_dBY_year', new Date(2013, 6, 3))).to.be('july 3, 2013');
     });
 
     it('%Date_dBY - зависимый отт локали вывод времени в формате: 4 ноября 2013', function() {
-        expect(strftime('%Date_dBY', new Date(2013, 6, 3))).to.be('3 июля 2013');
+        expect(strftime('%Date_dBY', new Date(2013, 6, 3))).to.be('july 3, 2013');
     });
 
     it('%Date_dBA - зависимый отт локали вывод времени в формате: 4 ноября, Среда', function() {
-        expect(strftime('%Date_dBA', new Date(2013, 6, 3))).to.be('3 июля, Среда');
+        expect(strftime('%Date_dBA', new Date(2013, 6, 3))).to.be('july 3, Wednesday');
     });
 
     it('%Date_AdBY - зависимый отт локали вывод времени в формате: Среда, 4 ноября 2013', function() {
-        expect(strftime('%Date_AdBY', new Date(2013, 6, 3))).to.be('Среда, 3 июля 2013');
+        expect(strftime('%Date_AdBY', new Date(2013, 6, 3))).to.be('Wednesday, july 3, 2013');
     });
 
     it('%Date_df_in_HM - зависимый отт локали вывод времени в формате: 4 ноя. в 12:36', function() {
-        expect(strftime('%Date_df_in_HM', new Date(2013, 6, 3, 12, 12))).to.be('3 июл. в 12:12');
+        expect(strftime('%Date_df_in_HM', new Date(2013, 6, 3, 12, 12))).to.be('jul., 3 at 12:12');
     });
 
     it('%Date_dfY - зависимый отт локали вывод времени в формате: 4 ноя. 2013', function() {
-        expect(strftime('%Date_dfY', new Date(2013, 6, 3))).to.be('3 июл. 2013');
+        expect(strftime('%Date_dfY', new Date(2013, 6, 3))).to.be('3 jul. 2013');
     });
 
     it('%Date_dB_in_HM - зависимый отт локали вывод времени в формате: 11 ноября в 12:36', function() {
-        expect(strftime('%Date_dB_in_HM', new Date(2013, 6, 3, 12, 12))).to.be('3 июля в 12:12');
+        expect(strftime('%Date_dB_in_HM', new Date(2013, 6, 3, 12, 12))).to.be('july 3 at 12:12');
     });
 
     it('%Date_dmY__dot - вывод времени в формате: 04.05.2013', function() {
@@ -219,7 +224,7 @@ describe('strftime', function() {
     });
 
     it('%Date_df - зависимый отт локали вывод времени в формате: 21 окт.', function() {
-        expect(strftime('%Date_df', new Date(2013, 6, 3))).to.be('3 июл.');
+        expect(strftime('%Date_df', new Date(2013, 6, 3))).to.be('3 jul.');
     });
 
     it('%Date_FT - вывод времени в формате: 2013-07-01 12:43:01', function() {

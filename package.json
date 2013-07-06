@@ -1,6 +1,6 @@
 {
     "name": "strftime",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "JavaScript strftime function",
     "main": "strftime.js",
     "keywords": [
