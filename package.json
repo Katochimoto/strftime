@@ -1,22 +1,36 @@
 {
     "name": "strftime",
     "version": "0.0.0",
-    "description": "strftime",
+    "description": "JavaScript strftime function",
     "main": "strftime.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "keywords": [
         "strftime",
         "javascript"
     ],
+    "homepage": "https://github.com/Katochimoto/strftime",
     "author": {
         "name": "rikishi",
         "email": "bufpost@yandex.ru"
-    },    
+    },
+    "bugs": {
+        "email": "bufpost@yandex.ru"
+    },
     "license": "BSD",
     "repository": {
         "type": "git",
         "url": "git@github.com:Katochimoto/strftime.git"
+    },
+    "scripts": {
+        "test": "make test"
+    },
+    "devDependencies": {
+        "jshint": "*",
+        "uglify-js": "*",
+        "requirer": "0.0.1",
+        "mocha": "*",
+        "expect.js": "*"
+    },
+    "engines": {
+        "node": "*"
     }
 }
