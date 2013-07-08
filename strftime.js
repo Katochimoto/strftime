@@ -1,3 +1,4 @@
+/* jshint -W067 */
 (function() {
     'use strict';
 
@@ -21,8 +22,10 @@ var strftime = function(format, date) {
     switch (typeof(date)) {
         case 'string':
             date = +date;
+            /* jshint -W086 */
         case 'number':
             date = new Date(date);
+            /* jshint -W086 */
         case 'object':
             // для подстановки объекта из yate
             if (date instanceof Array) {
@@ -41,6 +44,7 @@ var strftime = function(format, date) {
 
     return strftime.format(format, date);
 };
+
 
     strftime.version = '0.0.1';
 
@@ -86,6 +90,7 @@ var strftime = function(format, date) {
         'Date_dB_in_HM': '%#B %-d at %-H:%M',
         'Date_df': '%-d %#f'
     };
+
 }(strftime));
     (function(strftime) {
 
@@ -324,7 +329,7 @@ var strftime = function(format, date) {
         formatTransform.date = date;
 
         var loop = 5;
-        while (format.match(regAgregatSearch) && loop) {
+        while (regAgregatSearch.test(format) && loop) {
             format = format.replace(regAgregat, formatTransform);
             loop--;
         }
@@ -353,9 +358,7 @@ var strftime = function(format, date) {
         }
 
         var genitive = false;
-        if (mod.indexOf('!') === -1
-            && spec.length === 1
-            && (mod.indexOf('~') > -1 || ('bBf'.indexOf(spec) > -1 && /%[0\-_]?d[\s]+$/.test(str.substr(0, pos))))) {
+        if (mod.indexOf('!') === -1 && spec.length === 1 && (mod.indexOf('~') > -1 || ('bBf'.indexOf(spec) > -1 && /%[0\-_]?d[\s]+$/.test(str.substr(0, pos))))) {
 
             genitive = true;
         }
@@ -364,38 +367,38 @@ var strftime = function(format, date) {
     }
 
     /**
-     * @param {Number} x
-     * @param {String|Number|undefined} [pad]
-     * @param {String|Number|undefined} [def=0]
-     * @param {String|Number|undefined} [r=10]
+     * @param {Number} aData
+     * @param {String|Number|undefined} [aPad]
+     * @param {String|Number|undefined} [aDef=0]
+     * @param {String|Number|undefined} [aRate=10]
      * @returns {String|Number}
      */
-    function pad(x, pad, def, r) {
-        if (pad === '-') {
-            return x;
+    function pad(aData, aPad, aDef, aRate) {
+        if (aPad === '-') {
+            return aData;
         }
 
-        if (pad === '_') {
-            pad = ' ';
+        if (aPad === '_') {
+            aPad = ' ';
         }
 
-        if (typeof def === 'undefined') {
-            def = 0;
+        if (typeof aDef === 'undefined') {
+            aDef = 0;
         }
 
-        if (typeof r === 'undefined') {
-            r = 10;
+        if (typeof aRate === 'undefined') {
+            aRate = 10;
         }
 
-        if (typeof pad === 'undefined' || pad === '') {
-            pad = def;
+        if (typeof aPad === 'undefined' || aPad === '') {
+            aPad = aDef;
         }
 
-        for (; r > x|0 && r > 1; r /= 10) {
-            x = pad.toString() + x;
+        for (; aRate > aData|0 && aRate > 1; aRate /= 10) {
+            aData = aPad.toString() + aData;
         }
 
-        return x.toString();
+        return aData.toString();
     }
 
     /**
@@ -421,4 +424,5 @@ var strftime = function(format, date) {
 
 }(strftime));
 
-})();
+
+}());

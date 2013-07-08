@@ -1,11 +1,11 @@
 {
     "name": "strftime",
     "version": "0.0.1",
-    "description": "JavaScript strftime function",
+    "description": "Date formatting function",
     "main": "strftime.js",
     "keywords": [
         "strftime",
-        "javascript"
+        "date"
     ],
     "homepage": "https://github.com/Katochimoto/strftime",
     "author": {

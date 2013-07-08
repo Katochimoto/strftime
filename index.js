@@ -1,3 +1,4 @@
+/* jshint -W067 */
 (function() {
     'use strict';
 
@@ -20,4 +21,4 @@
     require('lib/locale.js');
     require('lib/util.js');
 
-})();
+}());

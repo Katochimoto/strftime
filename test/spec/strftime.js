@@ -6,7 +6,7 @@ if (typeof require == 'function') {
 describe('strftime', function() {
     it('по умолчанию текущая дата', function() {
         var d = new Date();
-        expect(strftime('%-d')|0).to.be(d.getDay());
+        expect(strftime('%-d')|0).to.be(d.getDate());
     });
 
     it('дату можно указать в виде объекта Date', function() {
