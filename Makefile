@@ -6,10 +6,10 @@ npm:
 	npm install
 
 build:
-	./node_modules/requirer/bin/requirer index.js strftime.js
+	./node_modules/.bin/requirer index.js strftime.js
 
 prod: build
-	./node_modules/uglify-js/bin/uglifyjs -o strftime.min.js strftime.js
+	./node_modules/.bin/uglifyjs -o strftime.min.js strftime.js
 
 test:
 	./node_modules/.bin/mocha --reporter dot $(TESTS)
