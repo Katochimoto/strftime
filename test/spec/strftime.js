@@ -15,13 +15,9 @@ describe('strftime', function() {
         expect(strftime('%d', new Date(2013, 6, 3))).to.be('03');
     });
 
-    it('дату можно указать в виде строки цифр или числа timestamp с миллисек.', function() {
+    it('дату можно указать в виде числа timestamp с миллисек.', function() {
         var d = new Date(2013, 6, 3);
         expect(strftime('%d', d.getTime())).to.be('03');
-    });
-
-    it('дату можно указать в виде объекта {year:, month:, day:, hours:, minutes:, seconds:, ms:}, свойства не обязательны', function() {
-        expect(strftime('%d', {year: 2013, month: 6, day: 3})).to.be('03');
     });
 
     it('если дата указана неправильно, должно вернуть null', function() {

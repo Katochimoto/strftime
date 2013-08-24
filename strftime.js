@@ -1,45 +1,30 @@
 /* jshint -W067 */
-;(function() {
+(function() {
     'use strict';
 
     /**
  * Форматированный вывод даты.
  *
  * Варианты указания даты:
- * String - приведение к double timestamp и создание объекта Date
  * Number - создание объекта Date
  * Date - без преобразований
- * Object - предполагает передачу объекта {year:, month:, day:, hours:, minutes:, seconds:, ms:}, свойства не обязательны
- * Array - предполагает передачу псевдо-объекта из yate, с доступом к данным через jpath(date, '.data')[0]
  *
  * @param {String} format
- * @param {Date|String|Number|Object|Array} [date=Date]
+ * @param {Date|Number} [date=Date]
  * @returns {String|Null}
  */
+/*jshint -W079 */
 var strftime = function(format, date) {
-    date = date || new Date();
+    if (typeof date === 'undefined') {
+        date = new Date();
+    }
 
-    switch (typeof(date)) {
-        case 'string':
-            date = +date;
-            /* jshint -W086 */
-        case 'number':
-            date = new Date(date);
-            /* jshint -W086 */
-        case 'object':
-            // для подстановки объекта из yate
-            if (date instanceof Array) {
-                date = jpath(date, '.data')[0];
-            }
+    if (typeof date === 'number') {
+        date = new Date(date);
+    }
 
-            var type = Object.prototype.toString.call(date);
-            if (type === '[object Object]') {
-                date = new Date(date.year|0, date.month|0, date.day|0, date.hours|0, date.minutes|0, date.seconds|0, date.ms|0);
-            }
-
-            if (!(date instanceof Date) || date == 'Invalid Date') {
-                return null;
-            }
+    if (!(date instanceof Date) || String(date) === 'Invalid Date') {
+        return null;
     }
 
     return strftime.format(format, date);
@@ -92,6 +77,8 @@ var strftime = function(format, date) {
     };
 
 }(strftime));
+
+
     (function(strftime) {
 
     var locale = strftime.locale;
@@ -122,7 +109,7 @@ var strftime = function(format, date) {
             return locale.c;
         },
         'C': function(d, mode, numPad) {
-            return pad(d.getFullYear() / 100|0, numPad, 0);
+            return pad(parseInt(d.getFullYear() / 100, 10), numPad, 0);
         },
         'd': function(d, mode, numPad) {
             return pad(d.getDate(), numPad, 0);
@@ -140,9 +127,9 @@ var strftime = function(format, date) {
             return pad(specifiers.G(d) % 100, numPad, 0);
         },
         'G': function(d) {
-            var y = d.getFullYear()|0;
-            var V = specifiers.V(d)|0;
-            var W = specifiers.W(d)|0;
+            var y = parseInt(d.getFullYear(), 10);
+            var V = parseInt(specifiers.V(d), 10);
+            var W = parseInt(specifiers.W(d), 10);
 
             if (W > V) {
                 y++;
@@ -167,9 +154,9 @@ var strftime = function(format, date) {
          * @returns {String|Number}
          */
         'j': function(d, mode, numPad) {
-            var ms = d - new Date('' + d.getFullYear() + '/1/1 GMT');
+            var ms = d - new Date(String(d.getFullYear()) + '/1/1 GMT');
             ms += d.getTimezoneOffset() * 60000;
-            var day = 1 + ms / 60000 / 60 / 24|0;
+            var day = parseInt(1 + ms / 60000 / 60 / 24, 10);
             return pad(day, numPad, 0, 100);
         },
         'm': function(d, mode, numPad) {
@@ -181,13 +168,13 @@ var strftime = function(format, date) {
         'n': function() {
             return "\n";
         },
-        'p': function (d) {
+        'p': function(d) {
             var p = d.getHours() >= 12 ? 1 : 0;
-            return ('' + locale.P[p]).toUpperCase();
+            return String(locale.P[p]).toUpperCase();
         },
-        'P': function (d) {
+        'P': function(d) {
             var p = d.getHours() >= 12 ? 1 : 0;
-            return '' + locale.P[p];
+            return String(locale.P[p]);
         },
         'r': function() {
             return locale.r;
@@ -209,19 +196,19 @@ var strftime = function(format, date) {
             return day === 0 ? 7 : day;
         },
         'U': function(d) {
-            var day = specifiers.j(d)|0;
+            var day = parseInt(specifiers.j(d), 10);
             var rdow = 6 - d.getDay();
-            var woy = (day + rdow) / 7|0;
+            var woy = parseInt((day + rdow) / 7, 10);
             return pad(woy, 0);
         },
         'V': function(d, mode, numPad) {
-            var woy = specifiers.W(d)|0;
-            var dow1_1 = (new Date('' + d.getFullYear() + '/1/1')).getDay();
+            var woy = parseInt(specifiers.W(d), 10);
+            var dow1_1 = (new Date(d.getFullYear() + '/1/1')).getDay();
             var idow = woy + (dow1_1 > 4 || dow1_1 <= 1 ? 0 : 1);
-            if (idow === 53 && (new Date('' + d.getFullYear() + '/12/31')).getDay() < 4) {
+            if (idow === 53 && (new Date(d.getFullYear() + '/12/31')).getDay() < 4) {
                 idow = 1;
             } else if (idow === 0) {
-                idow = specifiers.V(new Date('' + (d.getFullYear() - 1) + '/12/31'));
+                idow = specifiers.V(new Date((d.getFullYear() - 1) + '/12/31'));
             }
             return pad(idow, numPad, 0);
         },
@@ -229,9 +216,9 @@ var strftime = function(format, date) {
             return d.getDay();
         },
         'W': function(d, mode, numPad) {
-            var day = specifiers.j(d)|0;
-            var rdow = 7 - specifiers.u(d)|0;
-            var woy = (day + rdow) / 7|0;
+            var day = parseInt(specifiers.j(d), 10);
+            var rdow = 7 - parseInt(specifiers.u(d), 10);
+            var woy = parseInt((day + rdow) / 7, 10);
             return pad(woy, numPad, 0, 10);
         },
         'x': function() {
@@ -248,7 +235,7 @@ var strftime = function(format, date) {
         },
         'z': function(d) {
             var o = d.getTimezoneOffset();
-            var H = pad(Math.abs(o / 60)|0, 0);
+            var H = pad(parseInt(Math.abs(o / 60), 10), 0);
             var M = pad(o % 60, 0);
             return (o > 0 ? '-' : '+') + H + M;
         },
@@ -260,7 +247,7 @@ var strftime = function(format, date) {
             return pad(l === 0 ? 12 : l, numPad, ' ');
         },
         's': function(d) {
-            return (d.getTime() / 1000)|0;
+            return parseInt((d.getTime() / 1000), 10);
         },
         '%': function() {
             return '%';
@@ -340,15 +327,15 @@ var strftime = function(format, date) {
     /**
      * @param {String} _
      * @param {String} spec
-     * @param {String|undefined} [numPad]
      * @param {String} [mod]
+     * @param {String|undefined} [numPad]
      * @param {Number} [pos]
      * @param {String} [str]
      * @returns {String}
      */
     function formatTransform(_, spec, mod, numPad, pos, str) {
-        spec = '' + spec;
-        mod = '' + mod;
+        spec = String(spec);
+        mod = String(mod);
 
         spec = spec.replace(/^[#_0\^\-!~]+/, '');
         var s = specifiers[spec];
@@ -394,7 +381,7 @@ var strftime = function(format, date) {
             aPad = aDef;
         }
 
-        for (; aRate > aData|0 && aRate > 1; aRate /= 10) {
+        for (; aRate > parseInt(aData, 10) && aRate > 1; aRate /= 10) {
             aData = aPad.toString() + aData;
         }
 
@@ -407,8 +394,8 @@ var strftime = function(format, date) {
      * @returns {String}
      */
     function toLetterCase(str, mode) {
-        str = '' + str;
-        mode = '' + mode;
+        str = String(str);
+        mode = String(mode);
 
         if (mode.indexOf('#') > -1) {
             return str.toLowerCase();
