@@ -27,7 +27,8 @@
         "nopt": "2.1.1"
     },
     "devDependencies": {
-        "jshint": "2.1.4",
+        "jscs": "1.0.5",
+        "jshint": ">=2.1.10",
         "uglify-js": "2.3.6",
         "requirer": "0.0.1",
         "mocha": "1.12.0",

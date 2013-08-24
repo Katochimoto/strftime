@@ -1,12 +1,14 @@
 if (typeof require == 'function') {
+    /*jshint -W020 */
     strftime = require('../../strftime');
+    /*jshint -W020 */
     expect = require('expect.js');
 }
 
 describe('strftime', function() {
     it('по умолчанию текущая дата', function() {
         var d = new Date();
-        expect(strftime('%-d')|0).to.be(d.getDate());
+        expect(Number(strftime('%-d'))).to.be(d.getDate());
     });
 
     it('дату можно указать в виде объекта Date', function() {
@@ -179,7 +181,7 @@ describe('strftime', function() {
 
     it('%s - метка времени Эпохи Unix (аналог getTime() без миллисек.)', function() {
         var d = new Date();
-        expect(strftime('%s', d)|0).to.be(d.getTime() / 1000|0);
+        expect(parseInt(strftime('%s', d), 10)).to.be(parseInt(d.getTime() / 1000, 10));
     });
 
 

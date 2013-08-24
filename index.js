@@ -1,5 +1,5 @@
 /* jshint -W067 */
-;(function() {
+(function() {
     'use strict';
 
     require('lib/strftime.js');
