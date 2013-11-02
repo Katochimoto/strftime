@@ -11,10 +11,11 @@
  *
  * @param {String} format
  * @param {Date|Number} [date=Date]
+ * @param {Boolean} [utc]
  * @returns {String|Null}
  */
 /*jshint -W079 */
-var strftime = function(format, date) {
+var strftime = function(format, date, utc) {
     if (typeof date === 'undefined') {
         date = new Date();
     }
@@ -25,6 +26,10 @@ var strftime = function(format, date) {
 
     if (!(date instanceof Date) || String(date) === 'Invalid Date') {
         return null;
+    }
+
+    if (utc) {
+        date.setTime(date.getTime() + date.getTimezoneOffset() * 60000);
     }
 
     return strftime.format(format, date);
