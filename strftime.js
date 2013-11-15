@@ -15,7 +15,7 @@
  * @returns {String|Null}
  */
 /*jshint -W079 */
-var strftime = function(format, date, utc) {
+var strftime = function(format, date, utc, localeName) {
     if (typeof date === 'undefined') {
         date = new Date();
     }
@@ -32,7 +32,7 @@ var strftime = function(format, date, utc) {
         date.setTime(date.getTime() + date.getTimezoneOffset() * 60000);
     }
 
-    return strftime.format(format, date);
+    return strftime.format(format, date, localeName);
 };
 
 
@@ -52,7 +52,18 @@ var strftime = function(format, date, utc) {
 
     (function(strftime) {
 
-    strftime.locale = {
+    var locales = {};
+
+    strftime.setLocale = function(name, data) {
+        locales[name] = data;
+    };
+
+    strftime.getLocale = function(name) {
+        name = name || 'en';
+        return locales[name] || {};
+    };
+
+    strftime.setLocale('en', {
         'a': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
         'A': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
         'b': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -79,39 +90,39 @@ var strftime = function(format, date, utc) {
         'Date_dfY': '%-d %#f %Y',
         'Date_dB_in_HM': '%#B %-d at %-H:%M',
         'Date_df': '%-d %#f'
-    };
+    });
 
 }(strftime));
 
 
     (function(strftime) {
 
-    var locale = strftime.locale;
+    var currentLocale;
     var regAgregat = /%(Date_[a-zA-Z0-9_]+|([#\^]?)[v]|[cDFrRTxX])/g;
     var regAgregatSearch = /%(Date_[a-zA-Z0-9_]+|[#\^]?[v]|[cDFrRTxX])/;
     var regSpec = /%(([#\^!~]{0,2})[aAbBfh]|([0\-_]?)[CdegHIjmMSVWyl]|[GnpPtuUwYzZs%])/g;
 
     var specifiers = {
         'a': function(d, mode) {
-            return toLetterCase(locale.a[d.getDay()], mode);
+            return toLetterCase(currentLocale.a[d.getDay()], mode);
         },
         'A': function(d, mode) {
-            return toLetterCase(locale.A[d.getDay()], mode);
+            return toLetterCase(currentLocale.A[d.getDay()], mode);
         },
         'b': function(d, mode, numPad, genitive) {
-            return toLetterCase(locale[genitive ? 'bg' : 'b'][d.getMonth()], mode);
+            return toLetterCase(currentLocale[genitive ? 'bg' : 'b'][d.getMonth()], mode);
         },
         'h': function(d, mode, numPad, genitive) {
             return specifiers.b(d, mode, numPad, genitive);
         },
         'f': function(d, mode, numPad, genitive) {
-            return toLetterCase(locale[genitive ? 'fg' : 'f'][d.getMonth()], mode);
+            return toLetterCase(currentLocale[genitive ? 'fg' : 'f'][d.getMonth()], mode);
         },
         'B': function(d, mode, numPad, genitive) {
-            return toLetterCase(locale[genitive ? 'Bg' : 'B'][d.getMonth()], mode);
+            return toLetterCase(currentLocale[genitive ? 'Bg' : 'B'][d.getMonth()], mode);
         },
         'c': function() {
-            return locale.c;
+            return currentLocale.c;
         },
         'C': function(d, mode, numPad) {
             return pad(parseInt(d.getFullYear() / 100, 10), numPad, 0);
@@ -175,14 +186,14 @@ var strftime = function(format, date, utc) {
         },
         'p': function(d) {
             var p = d.getHours() >= 12 ? 1 : 0;
-            return String(locale.P[p]).toUpperCase();
+            return String(currentLocale.P[p]).toUpperCase();
         },
         'P': function(d) {
             var p = d.getHours() >= 12 ? 1 : 0;
-            return String(locale.P[p]);
+            return String(currentLocale.P[p]);
         },
         'r': function() {
-            return locale.r;
+            return currentLocale.r;
         },
         'R': function() {
             return '%H:%M';
@@ -227,10 +238,10 @@ var strftime = function(format, date, utc) {
             return pad(woy, numPad, 0, 10);
         },
         'x': function() {
-            return locale.x;
+            return currentLocale.x;
         },
         'X': function() {
-            return locale.X;
+            return currentLocale.X;
         },
         'y': function(d, mode, numPad) {
             return pad(d.getFullYear() % 100, numPad, 0);
@@ -263,8 +274,8 @@ var strftime = function(format, date, utc) {
             var time = now.getTime() + now.getTimezoneOffset() * 60000;
             var diff = Math.ceil((td - time) / 60000 / 60 / 24) + 1;
 
-            if (locale.day[diff]) {
-                return toLetterCase(locale.day[diff], mode);
+            if (currentLocale.day[diff]) {
+                return toLetterCase(currentLocale.day[diff], mode);
 
             } else {
                 return '%d %' + mode + 'B';
@@ -275,34 +286,34 @@ var strftime = function(format, date, utc) {
             return '%Y-%m-%dT%H:%M:%S';
         },
         'Date_dBY_year_in_HM': function() {
-            return locale.Date_dBY_year_in_HM;
+            return currentLocale.Date_dBY_year_in_HM;
         },
         'Date_dBY_year': function() {
-            return locale.Date_dBY_year;
+            return currentLocale.Date_dBY_year;
         },
         'Date_dBY': function() {
-            return locale.Date_dBY;
+            return currentLocale.Date_dBY;
         },
         'Date_dBA': function() {
-            return locale.Date_dBA;
+            return currentLocale.Date_dBA;
         },
         'Date_AdBY': function() {
-            return locale.Date_AdBY;
+            return currentLocale.Date_AdBY;
         },
         'Date_df_in_HM': function() {
-            return locale.Date_df_in_HM;
+            return currentLocale.Date_df_in_HM;
         },
         'Date_dfY': function() {
-            return locale.Date_dfY;
+            return currentLocale.Date_dfY;
         },
         'Date_dB_in_HM': function() {
-            return locale.Date_dB_in_HM;
+            return currentLocale.Date_dB_in_HM;
         },
         'Date_dmY__dot': function() {
             return '%d.%m.%Y';
         },
         'Date_df': function() {
-            return locale.Date_df;
+            return currentLocale.Date_df;
         },
         'Date_FT': function() {
             return '%F %T';
@@ -317,8 +328,9 @@ var strftime = function(format, date, utc) {
      * @param {Date} date
      * @returns {String}
      */
-    strftime.format = function(format, date) {
+    strftime.format = function(format, date, localeName) {
         formatTransform.date = date;
+        currentLocale = strftime.getLocale(localeName);
 
         var loop = 5;
         while (regAgregatSearch.test(format) && loop) {
