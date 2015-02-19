@@ -1,10 +1,13 @@
 TESTS=test/spec/*.js
 
-all: node_modules build
+all: node_modules build index.jsx
 
 node_modules: package.json
 	npm install
 	touch node_modules
+
+index.jsx: node_modules
+	./node_modules/.bin/requirer index.jsx strftime.jsx
 
 build: node_modules
 	./node_modules/.bin/requirer index.js strftime.js

@@ -38,19 +38,7 @@ var strftime = function(format, date, utc, localeName) {
 };
 
 
-    strftime.version = '0.0.1';
-
-    var namespace;
-
-    if (typeof module !== 'undefined') {
-        namespace = module.exports = strftime;
-    } else {
-        namespace = (function() {
-            return this || (1, eval)('this');
-        }());
-    }
-
-    namespace.strftime = strftime;
+    strftime.version = '1.0.1';
 
     (function(strftime) {
 
@@ -440,5 +428,7 @@ var strftime = function(format, date, utc, localeName) {
 
 }(strftime));
 
+
+    return strftime;
 
 }());
