@@ -89,13 +89,15 @@ var strftime = function(format, date, utc, localeName) {
         'Date_AdBY': '%A, %#B %-d, %Y',
         'Date_dBA': '%#B %-d, %A',
         'Date_df_in_HM': '%#f, %-d at %-H:%M',
+        'Date_db_in_HM': '%#b, %-d at %-H:%M',
         'Date_dfY': '%-d %#f %Y',
         'Date_dB_in_HM': '%#B %-d at %-H:%M',
-        'Date_df': '%-d %#f'
+        'Date_df': '%-d %#f',
+        'Date_today_at_HM': 'today at %-H:%M',
+        'Date_dmy_at_HM': '%d.%m.%y at %-H:%M'
     });
 
 }(strftime));
-
 
     (function(strftime) {
 
@@ -304,6 +306,9 @@ var strftime = function(format, date, utc, localeName) {
         'Date_df_in_HM': function() {
             return currentLocale.Date_df_in_HM;
         },
+        'Date_db_in_HM': function() {
+            return currentLocale.Date_db_in_HM;
+        },
         'Date_dfY': function() {
             return currentLocale.Date_dfY;
         },
@@ -321,6 +326,12 @@ var strftime = function(format, date, utc, localeName) {
         },
         'Date_dmY__minus': function() {
             return '%d-%m-%Y';
+        },
+        'Date_today_at_HM': function() {
+            return currentLocale.Date_today_at_HM;
+        },
+        'Date_dmy_at_HM': function() {
+            return currentLocale.Date_dmy_at_HM;
         }
     };
 
