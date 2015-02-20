@@ -81,6 +81,7 @@ var strftime = function(format, date, utc, localeName) {
         'Date_dfY': '%-d %#f %Y',
         'Date_dB_in_HM': '%#B %-d at %-H:%M',
         'Date_df': '%-d %#f',
+        'Date_db': '%-d %#b',
         'Date_today_at_HM': 'today at %-H:%M',
         'Date_dmy_at_HM': '%d.%m.%y at %-H:%M'
     });
@@ -308,6 +309,9 @@ var strftime = function(format, date, utc, localeName) {
         },
         'Date_df': function() {
             return currentLocale.Date_df;
+        },
+        'Date_db': function() {
+            return currentLocale.Date_db;
         },
         'Date_FT': function() {
             return '%F %T';
